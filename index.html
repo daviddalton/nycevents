@@ -23,7 +23,7 @@
   });
 
 
-    $.getJSON('http://api.nytimes.com/svc/events/v2/listings.json?&ll=40.7127,-74.0059&radius=5000&api-key=1b6ec24de1512db2fae47f5165ce39ea:6:69563513', function(eventResults) {
+    $.getJSON('http://api.nytimes.com/svc/events/v2/listings.json?&ll=40.7127,-74.0059&radius=5000&filters=category:forChildren&api-key=1b6ec24de1512db2fae47f5165ce39ea:6:69563513', function(eventResults) {
           $.each(eventResults.results, function(i, result) {
             var latitude = parseFloat(result.geocode_latitude);
             var longitude = parseFloat(result.geocode_longitude);
@@ -31,7 +31,7 @@
                                     '</div>'+
                                         '<h1 id="firstHeading" class="firstHeading">' + result.event_name + '</h1>'+
                                         '<div id="bodyContent">'+
-                                        '<p>' + result.web_description + '</p>'+                        
+                                        '<p>' + result.web_description + '</p>'+   '<p>' + result.category + '</p>'+                       
                                     '</div>'+
                                 '</div>';
             var infowindow = new google.maps.InfoWindow({
@@ -40,7 +40,6 @@
             var marker = new google.maps.Marker({
                 position: {lat: latitude, lng: longitude},
                 title: result.event_name,
-                text: result.web_description,
                 map: map
             });
             marker.addListener('click', function() {
@@ -63,17 +62,32 @@
 <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
         async defer></script>
 
-        <form>
-                <input type="checkbox" name="" value="">PG-13<br>
-                <input type="checkbox" name="" value="">R<br>
-                <input type="checkbox" name="" value="">Not-Rated<br>
-                <input type="submit" value="Submit">
+        <form id="filter">
+                <input id="movies" type="checkbox" name="" value="">Movies<br>
+                <input id="mom-movies" type="checkbox" name="" value="">Non-Movies<br>
+                <input id="forChildiren" type="checkbox" name="" value="">For Children<br>
+                <input id="submitButton" type="submit" value="Submit">
         </form>
 
 <script>
       $(document).ready(function() {
         
         });
+
+    </script>
+
+    <script type="text/javascript">
+        
+        function filterResults() {
+
+        }
+
+
+
+
+
+
+
 
     </script>
 
