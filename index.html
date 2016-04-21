@@ -14,16 +14,50 @@
     </style>
 
 <script>
+
+    var map;    
+
   function initMap() {
     var myLatLng = {lat: 40.7100, lng: -74.0050};
     var mapDiv = document.getElementById('map');
-    var map = new google.maps.Map(mapDiv, {
+    map = new google.maps.Map(mapDiv, {
       center: {lat: 40.7127, lng: -74.0059},
       zoom: 14
   });
 
+    var api_key = "1b6ec24de1512db2fae47f5165ce39ea:6:69563513";
+    var filters = "category:(-Movies)"
+    var center = "40.7127,-74.0059"
+    var radius = "2500"
+    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + center + "&radius=" + radius + "&filters=" + filters + "&api-key=" + api_key;
 
-    $.getJSON('http://api.nytimes.com/svc/events/v2/listings.json?&ll=40.7127,-74.0059&radius=5000&filters=category:forChildren&api-key=1b6ec24de1512db2fae47f5165ce39ea:6:69563513', function(eventResults) {
+    getMarkers(url);
+}
+
+function submitButton() {
+    var api_key = "1b6ec24de1512db2fae47f5165ce39ea:6:69563513";
+    var filters = "category:(-Movies)"
+    var center = "40.7127,-74.0059"
+    var radius = "2500"
+
+    if (document.getElementById("movies").checked) {
+    filters = "category:Movies"
+
+    }else if (document.getElementById("notMovies").checked) {
+    filters = "category:(-Movies)"
+
+    }else if (document.getElementById("movies").checked && document.getElementById("notMovies").checked) {
+    filters = "category:(Movies+-Movies)"
+
+    }
+
+    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + center + "&radius=" + radius + "&filters=" + filters + "&api-key=" + api_key;
+
+    getMarkers(url);
+}
+
+function getMarkers(url) {
+    $.getJSON(url, function(eventResults) {
           $.each(eventResults.results, function(i, result) {
             var latitude = parseFloat(result.geocode_latitude);
             var longitude = parseFloat(result.geocode_longitude);
@@ -48,12 +82,8 @@
           });
         });
 }
+
 </script>
-
-
-
-    
-
 </head>
 <body>
 
@@ -64,32 +94,17 @@
 
         <form id="filter">
                 <input id="movies" type="checkbox" name="" value="">Movies<br>
-                <input id="mom-movies" type="checkbox" name="" value="">Non-Movies<br>
-                <input id="forChildiren" type="checkbox" name="" value="">For Children<br>
-                <input id="submitButton" type="submit" value="Submit">
+                <input id="notMovies" type="checkbox" name="" value="" checked="">Not Movies<br>
         </form>
+
+        <button onclick="submitButton()">Click me</button>
 
 <script>
       $(document).ready(function() {
         
         });
 
-    </script>
-
-    <script type="text/javascript">
-        
-        function filterResults() {
-
-        }
-
-
-
-
-
-
-
-
-    </script>
+</script>
 
 </body>
 </html>
