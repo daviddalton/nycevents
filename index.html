@@ -15,7 +15,8 @@
 
 <script>
 
-    var map;    
+    var map; 
+    var markersArray = [];   
 
   function initMap() {
     var myLatLng = {lat: 40.7100, lng: -74.0050};
@@ -25,38 +26,46 @@
       zoom: 14
   });
 
+    google.maps.event.addListener(map,'dragend',function(event) {
+    submitButton();
+});
+
+
     var api_key = "1b6ec24de1512db2fae47f5165ce39ea:6:69563513";
-    var filters = "category:(-Movies)"
-    var center = "40.7127,-74.0059"
+    var filters = ""
+    var lat = map.getCenter().lat();
+    var lng = map.getCenter().lng();
     var radius = "2500"
-    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + center + "&radius=" + radius + "&filters=" + filters + "&api-key=" + api_key;
+    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + lat + "," + lng + "&radius=" + radius + filters + "&api-key=" + api_key;
 
     getMarkers(url);
 }
 
 function submitButton() {
     var api_key = "1b6ec24de1512db2fae47f5165ce39ea:6:69563513";
-    var filters = "category:(-Movies)"
-    var center = "40.7127,-74.0059"
+    var filters = ""
+    var lat = map.getCenter().lat();
+    var lng = map.getCenter().lng();
     var radius = "2500"
 
-    if (document.getElementById("movies").checked) {
-    filters = "category:Movies"
+    if (document.getElementById("movies").checked && !document.getElementById("notMovies").checked) {
+    filters = "&filters=category:Movies"
 
-    }else if (document.getElementById("notMovies").checked) {
-    filters = "category:(-Movies)"
+    }else if (document.getElementById("notMovies").checked && !document.getElementById("movies").checked) {
+    filters = "&filters=category:(-Movies)"
 
     }else if (document.getElementById("movies").checked && document.getElementById("notMovies").checked) {
-    filters = "category:(Movies+-Movies)"
+    filters = ""
 
     }
 
-    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + center + "&radius=" + radius + "&filters=" + filters + "&api-key=" + api_key;
+    var url = "http://api.nytimes.com/svc/events/v2/listings.json?&ll=" + lat + "," + lng + "&radius=" + radius + filters + "&api-key=" + api_key;
 
     getMarkers(url);
 }
 
 function getMarkers(url) {
+    clearMarkers();
     $.getJSON(url, function(eventResults) {
           $.each(eventResults.results, function(i, result) {
             var latitude = parseFloat(result.geocode_latitude);
@@ -79,9 +88,20 @@ function getMarkers(url) {
             marker.addListener('click', function() {
                 infowindow.open(map, marker);
             });
+            markersArray.push(marker);
+            google.maps.event.addListener(marker,"click",function(){
+            });
           });
         });
 }
+
+function clearMarkers() {
+  for (var i = 0; i < markersArray.length; i++ ) {
+    markersArray[i].setMap(null);
+  }
+  markersArray.length = 0;
+}
+
 
 </script>
 </head>
